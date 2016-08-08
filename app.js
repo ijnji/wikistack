@@ -3,7 +3,7 @@ var swig = require('swig');
 var path = require('path');
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
-
+var models = require('./models/index.js');
 var app = express();
 
 app.engine('html', swig.renderFile);
@@ -25,6 +25,13 @@ app.get('/', function(req, res, next) {
     res.render('index');
 });
 
-var server = app.listen(3000, function() {
-    console.log('listening on port: 3000');
-});
+models.User.sync({})
+    .then(function(){
+        return models.Page.sync({})
+    })
+    .then(function() {
+        app.listen(3000, function() {
+            console.log('listening on port: 3000');
+        })
+    })
+    .catch(console.error);
