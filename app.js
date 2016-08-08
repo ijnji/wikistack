@@ -4,6 +4,7 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var models = require('./models/index.js');
+var wikiRouter = require('./routes/wiki.js');
 var app = express();
 
 app.engine('html', swig.renderFile);
@@ -24,6 +25,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', function(req, res, next) {
     res.render('index');
 });
+
+app.use('/wiki', wikiRouter());
 
 models.User.sync({})
     .then(function(){
