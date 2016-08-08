@@ -5,17 +5,16 @@ module.exports = function wikiRouter() {
 
     router.get('/', function(req, res, next) {
         console.log('get root');
-        res.send('got to GET /wiki/');
+        res.redirect('/');
     });
 
     router.post('/', function(req, res, next) {
-        console.log('post root');
+        console.log(req.body);
         res.send('got to POST /wiki/');
     });
 
     router.get('/add', function(req, res, next) {
-        console.log('get add');
-        res.send('got to GET /wiki/add');
+        res.render('addpage');
     });
 
     return router;
