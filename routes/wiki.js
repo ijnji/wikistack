@@ -24,14 +24,29 @@ module.exports = function wikiRouter() {
         var title = req.body.title;
         var content = req.body.content;
         var status = req.body.status;
-        var page = Page.build({
-          title: title,
-          content: content,
-          status: status
-        });
-        page.save().then(function(){
+
+        User.findOrCreate({
+          where: {name: author},
+          defaults: {email: email}
+        })
+        .then(function(values){
+          var user = values[0];
+          var page = Page.build({
+            title: title,
+            content: content,
+            status: status,
+          });
+
+          page.save().then(function(){
+              return page.setAuthor(user);
+          })
+          .then(function(page){
             res.redirect(page.route);
-        });
+          });
+
+        })
+
+
     });
 
 
@@ -48,7 +63,7 @@ module.exports = function wikiRouter() {
       })
       .then(function(foundPage){
         var page = foundPage.dataValues;
-        res.render('wikipage', page);
+        res.render('wikipage', { page: page});
       })
       .catch(next);
     });
