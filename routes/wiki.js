@@ -22,13 +22,26 @@ module.exports = function wikiRouter() {
           status: status
         });
         page.save().then(function(){
-          res.redirect('/');
+          res.json(page);
         });
     });
+
+
 
     router.get('/add', function(req, res, next) {
         res.render('addpage');
     });
 
+    router.get('/:urlTitle', function(req,res, next){
+      Page.findOne({
+        where: {
+          urlTitle: req.params.urlTitle
+        }
+      })
+      .then(function(foundPage){
+        res.json(foundPage);
+      })
+      .catch(next);
+    });
     return router;
 };
