@@ -6,8 +6,16 @@ module.exports = function wikiRouter() {
     var router = express.Router();
 
     router.get('/', function(req, res, next) {
-        console.log('get root');
-        res.redirect('/');
+        Page.findAll({})
+        .then(function(foundPages) {
+            var foundPages = foundPages.map(function(page) {
+                return page.dataValues;
+            });
+            console.log(foundPages);
+            res.render('index', {
+                foundPages: foundPages
+            });
+        });
     });
 
     router.post('/', function(req, res, next) {
@@ -22,7 +30,7 @@ module.exports = function wikiRouter() {
           status: status
         });
         page.save().then(function(){
-          res.json(page);
+            res.redirect(page.route);
         });
     });
 
@@ -39,7 +47,8 @@ module.exports = function wikiRouter() {
         }
       })
       .then(function(foundPage){
-        res.json(foundPage);
+        var page = foundPage.dataValues;
+        res.render('wikipage', page);
       })
       .catch(next);
     });
